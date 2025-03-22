@@ -2,8 +2,12 @@ package pl.urban.authservice.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import pl.urban.authservice.entity.User;
+import pl.urban.authservice.request.LoginRequest;
 import pl.urban.authservice.request.UserRequest;
+import pl.urban.authservice.response.JwtResponse;
 import pl.urban.authservice.response.UserResponse;
 import pl.urban.authservice.service.UserService;
 
@@ -23,6 +27,14 @@ public class AuthController {
             @RequestBody @Valid UserRequest request
     ) {
         return ResponseEntity.ok(userService.registerUser(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(
+            @RequestBody @Valid LoginRequest loginRequest
+    ) {
+            final String jwt = userService.loginUser(loginRequest);
+            return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     @PutMapping("/update")

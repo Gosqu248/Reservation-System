@@ -6,11 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.urban.authservice.entity.User;
+import pl.urban.authservice.entity.UserSecurity;
+import pl.urban.authservice.exception.AccountLockedException;
 import pl.urban.authservice.exception.EmailExistException;
+import pl.urban.authservice.exception.InvalidCredentialsException;
 import pl.urban.authservice.exception.UserNotFoundException;
 import pl.urban.authservice.repository.UserRepository;
+import pl.urban.authservice.request.LoginRequest;
 import pl.urban.authservice.request.UserRequest;
 import pl.urban.authservice.response.UserResponse;
+import pl.urban.authservice.security.JwtUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +27,9 @@ import static java.lang.String.format;
 public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
+    private final UserSecurityService userSecurityService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public String registerUser(UserRequest request) {
         if (repository.existsByEmail(request.email())) {
@@ -78,4 +85,28 @@ public class UserService {
     public void deleteUser(String email) {
         repository.deleteByEmail(email);
     }
+
+    public String loginUser(LoginRequest loginRequest) {
+        User user = getUserBySubject(loginRequest.email());
+        if (user == null) {
+            throw new InvalidCredentialsException("Invalid credentials");
+        }
+        if (userSecurityService.isAccountLocked(user))  {
+            throw new AccountLockedException("Account is locked. Try again later.");
+        }
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+            userSecurityService.incrementFailedLoginAttempts(user);
+            repository.save(user);
+            throw new InvalidCredentialsException("Invalid credentials");
+        }
+        userSecurityService.resetFailedLoginAttempts(user);
+        return jwtUtil.generateToken(user, false);
+    }
+
+    private User getUserBySubject(String subject) {
+        return repository.findByEmail(subject)
+                .orElseThrow(() -> new UserNotFoundException(format("User with email %s not found", subject)));
+    }
+
+
 }

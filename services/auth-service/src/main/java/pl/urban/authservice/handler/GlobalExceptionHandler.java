@@ -6,7 +6,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.urban.authservice.exception.AccountLockedException;
 import pl.urban.authservice.exception.EmailExistException;
+import pl.urban.authservice.exception.InvalidCredentialsException;
 import pl.urban.authservice.exception.UserNotFoundException;
 
 import java.util.HashMap;
@@ -21,10 +23,24 @@ public class GlobalExceptionHandler {
                 .body(e.getMsg());
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<String> handle(InvalidCredentialsException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(e.getMsg());
+    }
+
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<String> handle(EmailExistException e) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(e.getMsg());
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<String> handle(AccountLockedException e) {
+        return ResponseEntity
+                .status(HttpStatus.LOCKED)
                 .body(e.getMsg());
     }
 
