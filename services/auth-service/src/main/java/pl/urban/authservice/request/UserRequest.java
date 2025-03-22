@@ -2,7 +2,6 @@ package pl.urban.authservice.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import pl.urban.authservice.enums.Role;
 
 public record UserRequest(
          @NotNull(message = "Firstname is required")
@@ -15,7 +14,6 @@ public record UserRequest(
          @NotNull(message = "Phone number is required")
          String phoneNumber,
          @NotNull(message = "Password is required")
-         String password,
-         Role role
+         String password
 ) {
 }
