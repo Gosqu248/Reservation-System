@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.urban.authservice.entity.User;
 import pl.urban.authservice.entity.UserSecurity;
+import pl.urban.authservice.enums.Role;
 import pl.urban.authservice.request.UserRequest;
 import pl.urban.authservice.response.UserResponse;
 
@@ -20,6 +21,7 @@ public class UserMapper {
                 .email(request.email())
                 .phoneNumber(request.phoneNumber())
                 .password(passwordEncoder.encode(request.password()))
+                .role(Role.user)
                 .build();
 
         UserSecurity userSecurity = new UserSecurity();
