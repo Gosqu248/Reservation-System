@@ -3,13 +3,14 @@ package pl.urban.authservice.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pl.urban.authservice.entity.User;
 import pl.urban.authservice.entity.UserSecurity;
 import pl.urban.authservice.enums.Role;
 import pl.urban.authservice.request.UserRequest;
 import pl.urban.authservice.response.UserResponse;
 
-@Component
+@Service
 @AllArgsConstructor
 public class UserMapper {
     private final BCryptPasswordEncoder passwordEncoder;
