@@ -109,4 +109,9 @@ public class UserService {
     }
 
 
+    public UserResponse findById(Long id) {
+        return repository.findById(id)
+                .map(mapper::fromUser)
+                .orElseThrow(() -> new UserNotFoundException(format("User with id %d not found", id)));
+    }
 }

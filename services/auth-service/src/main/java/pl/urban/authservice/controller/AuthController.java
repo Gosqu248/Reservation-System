@@ -62,6 +62,13 @@ public class AuthController {
         return ResponseEntity.ok(userService.findByEmail(email));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> findById(
+            @PathVariable("id") Long id
+    ) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
     @DeleteMapping("/delete/{email}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable("email") String email
