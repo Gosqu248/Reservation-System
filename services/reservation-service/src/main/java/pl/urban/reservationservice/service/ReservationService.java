@@ -3,6 +3,8 @@ package pl.urban.reservationservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.urban.reservationservice.exception.BusinessException;
+import pl.urban.reservationservice.kafka.ReservationConfirmation;
+import pl.urban.reservationservice.kafka.ReservationProducer;
 import pl.urban.reservationservice.repository.ReservationRepository;
 import pl.urban.reservationservice.request.ReservationRequest;
 import pl.urban.reservationservice.response.ReservationResponse;
@@ -20,6 +22,7 @@ public class ReservationService {
     private final UserClient userClient;
     private final ReservationRepository repository;
     private final ReservationMapper mapper;
+    private final ReservationProducer reservationProducer;
 
     public String createReservation(ReservationRequest request) {
         var user = this.userClient.findUserById(request.userId())
@@ -33,7 +36,19 @@ public class ReservationService {
         checkHouseAvailability(request.houseId(), request.startDate(), request.endDate());
 
         BigDecimal totalPrice = calculateTotalPrice(house.price(), request.startDate(), request.endDate());
-        repository.save(mapper.toReservation(request, totalPrice));
+        var reservation = repository.save(mapper.toReservation(request, totalPrice));
+
+        reservationProducer.sendReservationConfirmation(
+                new ReservationConfirmation(
+                        reservation.getId(),
+                        reservation.getHouseId(),
+                        reservation.getUserId(),
+                        reservation.getStartDate(),
+                        reservation.getEndDate(),
+                        reservation.getTotalPrice(),
+                        reservation.getStatus().name()
+                )
+        );
 
         return "Utworzono rezerwację dla użytkownika: " + user.email() + " na dom: " + house.name() + " od " + request.startDate() + " do " + request.endDate();
     }
@@ -62,6 +77,12 @@ public class ReservationService {
 
     public List<ReservationResponse> findAllByUserId(Long userId) {
         return repository.findAllByUserId(userId).stream()
+                .map(mapper::toReservationResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReservationResponse> findAll() {
+        return repository.findAll().stream()
                 .map(mapper::toReservationResponse)
                 .collect(Collectors.toList());
     }

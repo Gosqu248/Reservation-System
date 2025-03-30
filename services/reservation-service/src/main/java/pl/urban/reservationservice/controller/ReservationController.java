@@ -30,4 +30,9 @@ public class ReservationController {
         return ResponseEntity.ok(service.findAllByUserId(userId));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ReservationResponse>> getAllReservations() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
 }
