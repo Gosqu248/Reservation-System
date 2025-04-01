@@ -1,7 +1,7 @@
-package pl.urban.reservationservice.kafka;
+package pl.urban.notification.kafka;
 
-import pl.urban.reservationservice.response.HouseResponse;
-import pl.urban.reservationservice.response.UserResponse;
+import pl.urban.notification.response.HouseResponse;
+import pl.urban.notification.response.UserResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

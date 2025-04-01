@@ -34,6 +34,39 @@ services:
     networks:
       - microservices-net
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gosqu
+      MONGO_INITDB_ROOT_PASSWORD: gosqu
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=alibou
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=alibou
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+
+  mail-dev:
+    image: maildev/maildev
+    container_name: ms-mail-dev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+
 networks:
   microservices-net:
     driver: bridge
+
+volumes:
+  mongo:

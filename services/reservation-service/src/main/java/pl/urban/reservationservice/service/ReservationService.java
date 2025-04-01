@@ -41,8 +41,8 @@ public class ReservationService {
         reservationProducer.sendReservationConfirmation(
                 new ReservationConfirmation(
                         reservation.getId(),
-                        reservation.getHouseId(),
-                        reservation.getUserId(),
+                        house,
+                        user,
                         reservation.getStartDate(),
                         reservation.getEndDate(),
                         reservation.getTotalPrice(),
