@@ -1,10 +1,8 @@
 package pl.urban.houseservice.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.urban.houseservice.request.HouseRequest;
 import pl.urban.houseservice.response.HouseResponse;
 import pl.urban.houseservice.service.HouseService;
 
@@ -15,13 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HouseController {
     private final HouseService service;
-
-    @PostMapping("/create")
-    public ResponseEntity<Long> createHouse(
-            @RequestBody @Valid HouseRequest request
-    ) {
-        return ResponseEntity.ok(service.createHouse(request));
-    }
 
     @GetMapping("/{house-id}")
     public ResponseEntity<HouseResponse> getHouse(

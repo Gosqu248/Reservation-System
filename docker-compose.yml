@@ -1,10 +1,4 @@
 services:
-  redis:
-    image: redis:7
-    container_name: redis
-    ports:
-      - "6379:6379"
-
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -52,8 +46,8 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=alibou
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=alibou
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=gosqu
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=gosqu
       - ME_CONFIG_MONGODB_SERVER=mongodb
 
   mail-dev:
@@ -62,6 +56,14 @@ services:
     ports:
       - "1080:1080"
       - "1025:1025"
+
+  redis:
+    image: redis
+    container_name: redis2
+    ports:
+      - "6379:6379"
+    networks:
+      - microservices-net
 
 
 networks:
